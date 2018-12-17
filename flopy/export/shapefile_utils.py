@@ -145,7 +145,7 @@ def write_grid_shapefile(filename, mg, array_dict, nan_val=None):#-1.0e9):
                     # support old style SR object
                     pts = mg.get_vertices(i, j)
 
-                wr.poly(parts=[pts])
+                wr.poly([pts])
                 rec = [i + 1, j + 1]
                 for array in arrays:
                     rec.append(array[i, j])

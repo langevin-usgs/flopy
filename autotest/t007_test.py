@@ -294,13 +294,13 @@ def test_export_array():
                 if rotate:
                     assert np.abs(val - m.modelgrid.extent[0]) < 1e-6
                 else:
-                    assert np.abs(val - m.sr.xll) < 1e-6
+                    assert np.abs(val - m.modelgrid.xoffset) < 1e-6
             if 'yllcorner' in line.lower():
                 val = float(line.strip().split()[-1])
                 if rotate:
                     assert np.abs(val - m.modelgrid.extent[1]) < 1e-6
                 else:
-                    assert np.abs(val - m.sr.yll) < 1e-6
+                    assert np.abs(val - m.modelgrid.yoffset) < 1e-6
             if 'cellsize' in line.lower():
                 val = float(line.strip().split()[-1])
                 rot_cellsize = np.cos(np.radians(m.modelgrid.angrot)) * m.modelgrid.delr[0] # * m.sr.length_multiplier
@@ -1063,8 +1063,8 @@ if __name__ == '__main__':
     # test_rotation()
     # test_model_dot_plot()
     # test_vertex_model_dot_plot()
-    test_sr_with_Map()
-    test_modelgrid_with_PlotMapView()
+    #test_sr_with_Map()
+    #test_modelgrid_with_PlotMapView()
     # test_epsgs()
     # test_sr_scaling()
     # test_read_usgs_model_reference()
@@ -1075,8 +1075,8 @@ if __name__ == '__main__':
     #test_export_output()
     #for namfile in namfiles:
     #test_freyberg_export()
-    # test_export_array()
-    # test_write_shapefile()
+    test_export_array()
+    test_write_shapefile()
     #test_wkt_parse()
     #test_get_rc_from_node_coordinates()
     pass
