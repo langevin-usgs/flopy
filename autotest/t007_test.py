@@ -1021,7 +1021,7 @@ def test_shapefile_ibound():
     ml.export(shape_name)
     shp = shapefile.Reader(shape_name)
     field_names = [item[0] for item in shp.fields][1:]
-    ib_idx = field_names.index("ibound_001")
+    ib_idx = field_names.index("ibound_1")
     txt = "should be int instead of {0}".format(type(shp.record(0)[ib_idx]))
     assert type(shp.record(0)[ib_idx]) == int, txt
 

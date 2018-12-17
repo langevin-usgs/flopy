@@ -103,7 +103,7 @@ def test_mf6_grid_shp_export():
                         and 'rech' not in f]
     assert len(different_fields) == 0
     for l in np.arange(m.nlay)+1:
-        assert np.sum(np.abs(ra['rech_{:03d}'.format(l)] - ra6['rechar{:03d}'.format(l)])) < 1e-6
+        assert np.sum(np.abs(ra['rech_{}'.format(l)] - ra6['rechar{}'.format(l)])) < 1e-6
     common_fields = set(ra.dtype.names).intersection(ra6.dtype.names)
     common_fields.remove('geometry')
     # array values

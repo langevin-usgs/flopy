@@ -103,7 +103,7 @@ class ModflowGwfdisv(mfpackage.MFPackage):
                                       'vertices'))
     cell2d = ListTemplateGenerator(('gwf6', 'disv', 'cell2d', 'cell2d'))
     package_abbr = "gwfdisv"
-    package_type = "disv"
+    _package_type = "disv"
     dfn_file_name = "gwf-disv.dfn"
 
     dfn = [["block options", "name length_units", "type string", 
