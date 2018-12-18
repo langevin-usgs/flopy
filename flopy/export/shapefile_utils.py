@@ -628,7 +628,7 @@ def write_prj(shpname, mg=None, epsg=None, prj=None,
 
     elif mg is not None:
         if mg.epsg is not None:
-            prjtxt = CRS.getprj(epsg)
+            prjtxt = CRS.getprj(mg.epsg)
 
     else:
         print('No CRS information for writing a .prj file.\n'

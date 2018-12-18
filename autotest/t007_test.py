@@ -221,23 +221,19 @@ def test_export_output():
     assert np.array_equal(ibound_mask, arr_mask)
 
 def test_write_shapefile():
-    from flopy.utils.reference import SpatialReference
+    from flopy.discretization import StructuredGrid
     from flopy.export.shapefile_utils import shp2recarray
     from flopy.export.shapefile_utils import write_grid_shapefile, write_grid_shapefile2
 
-    sr = SpatialReference(delr=np.ones(10) *1.1,  # cell spacing along model rows
-                          delc=np.ones(10) *1.1,  # cell spacing along model columns
-                          epsg=26715,
-                          lenuni=1  # MODFLOW length units
-                          )
-    vrts = copy.deepcopy(sr.vertices)
+    sg = StructuredGrid(delr=np.ones(10) *1.1,  # cell spacing along model rows
+                        delc=np.ones(10) *1.1,  # cell spacing along model columns
+                        epsg=26715)
     outshp1 = os.path.join(tpth, 'junk.shp')
     outshp2 = os.path.join(tpth, 'junk2.shp')
-    write_grid_shapefile(outshp1, sr, array_dict={})
-    write_grid_shapefile2(outshp2, sr, array_dict={})
+    write_grid_shapefile(outshp1, sg, array_dict={})
+    write_grid_shapefile2(outshp2, sg, array_dict={})
 
     # test that vertices aren't getting altered by writing shapefile
-    assert np.array_equal(vrts, sr.vertices)
     for outshp in [outshp1, outshp2]:
         # check that pyshp reads integers
         # this only check that row/column were recorded as "N"
@@ -1075,7 +1071,7 @@ if __name__ == '__main__':
     #test_export_output()
     #for namfile in namfiles:
     #test_freyberg_export()
-    test_export_array()
+    #test_export_array()
     test_write_shapefile()
     #test_wkt_parse()
     #test_get_rc_from_node_coordinates()
