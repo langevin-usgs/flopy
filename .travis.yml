@@ -47,9 +47,6 @@ before_install:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"
 
-before_script:
-    - export PYTHONPATH=$PYTHONPATH:$(pwd)
-
 # command to install dependencies
 install:
     - if [[ ! -d "$HOME/.local/bin" ]]; then
@@ -84,6 +81,7 @@ install:
 
 # command to run tests
 script:
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)
     - export PYTHONPATH=$PYTHONPATH:.
     - echo python path; python -c "from __future__ import print_function; import sys; print(sys.path)"
     - python -c "import os; is_travis = 'TRAVIS' in os.environ; print('TRAVIS {}'.format(is_travis))"
