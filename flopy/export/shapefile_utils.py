@@ -160,7 +160,11 @@ def write_grid_shapefile(filename, mg, array_dict, nan_val=None):#-1.0e9):
                 rec.append(array[i])
             wr.record(*rec)
 
-    wr.save(filename)
+    # close or write the file
+    if sfv < 2:
+        wr.save(filename)
+    else:
+        wr.close()
     print('wrote {}'.format(filename))
     return
 

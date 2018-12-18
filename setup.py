@@ -31,7 +31,7 @@ setup(name=__name__,
                    'langevin@usgs.gov, jdhughes@usgs.gov, jwhite@usgs.gov, ' +
                    'aleaf@usgs.gov, spaulinski@usgs.gov, jjstarn@usgs.gov, ' +
                    'mnfienen@usgs.gov',
-      url='https://github.com/modflowpy/flopy/',
+      url='https://github.com/modflowpy/flopy/tree/spaulins-develop-grid/',
       license='CC0',
       platforms='Windows, Mac OS-X, Linux',
       install_requires=['enum34;python_version<"3.4"',
