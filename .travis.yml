@@ -47,6 +47,9 @@ before_install:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"
 
+before_script:
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)
+
 # command to install dependencies
 install:
     - if [[ ! -d "$HOME/.local/bin" ]]; then
@@ -77,7 +80,6 @@ install:
     - pip install nose-timer
     - pip install coveralls
     - pip install pylint
-    - pip install .
 
 
 # command to run tests
