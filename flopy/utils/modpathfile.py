@@ -190,9 +190,8 @@ class PathlineFile():
             sequencenumber, group, particleid, pathlinecount = t[0:4]
             ndata += pathlinecount
             # read the particle data
-            field_len = [10] + [16] * 7 + [10] * 3
-            d = np.genfromtxt(itertools.islice(self.file, 0, pathlinecount),
-                           dtype=dtyper, delimiter=field_len, missing_values="*"*10)
+            d = np.loadtxt(itertools.islice(self.file, 0, pathlinecount),
+                           dtype=dtyper)
             key = (idx, sequencenumber, group, particleid, pathlinecount)
             part_dict[key] = d.copy()
             idx += 1
