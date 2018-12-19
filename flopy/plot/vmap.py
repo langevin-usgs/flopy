@@ -1,6 +1,4 @@
-import copy
 import numpy as np
-from ..utils import geometry
 
 try:
     import matplotlib.pyplot as plt
@@ -10,7 +8,7 @@ try:
 except ImportError:
     plt = None
 
-from flopy.plot import plotutil
+from . import plotutil
 from .map import _MapView
 
 import warnings

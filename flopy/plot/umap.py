@@ -1,7 +1,4 @@
-import copy, warnings
-import sys
 import numpy as np
-from ..utils import geometry
 from .map import _MapView
 
 try:
@@ -10,7 +7,7 @@ try:
 except ImportError:
     plt = None
 
-from flopy.plot import plotutil
+from . import plotutil
 import warnings
 warnings.simplefilter('always', PendingDeprecationWarning)
 

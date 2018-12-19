@@ -9,10 +9,7 @@ import os
 import sys
 import math
 import numpy as np
-from flopy.utils import MfList, Util2d, Util3d, Transient2d, geometry
-from flopy.mf6.data.mfdataarray import MFArray
-from flopy.mf6.data.mfdatalist import MFTransientList
-from flopy.plot.plotbase import PlotMapView
+from flopy.utils import Util3d
 from flopy.datbase import DataType, DataInterface
 
 try:
@@ -1150,6 +1147,7 @@ class PlotUtilities(object):
          axes: list matplotlib.axes object
 
         """
+        from flopy.plot import PlotMapView
 
         defaults = {'figsize': None, 'masked_values': None,
                     'pcolor': True, 'inactive': True,
@@ -1278,6 +1276,8 @@ class PlotUtilities(object):
         -------
         axes: list matplotlib.axes object
         """
+
+        from flopy.plot import PlotMapView
 
         if plt is None:
             s = 'Could not import matplotlib.  Must install matplotlib ' +\
