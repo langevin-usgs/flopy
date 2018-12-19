@@ -12,7 +12,7 @@ try:
 except ImportError:
     plt = None
 
-from ..plot import plotutil
+from flopy.plot import plotutil
 import warnings
 warnings.simplefilter('always', PendingDeprecationWarning)
 
