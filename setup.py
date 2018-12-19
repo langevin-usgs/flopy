@@ -30,15 +30,15 @@ setup(name=__name__,
       author_email='mark.bakker@tudelft.nl, Vincent.Post@bgr.de, ' +
                    'langevin@usgs.gov, jdhughes@usgs.gov, jwhite@usgs.gov, ' +
                    'aleaf@usgs.gov, spaulinski@usgs.gov, jjstarn@usgs.gov, ' +
-                   'mnfienen@usgs.gov',
-      url='https://github.com/modflowpy/flopy/tree/spaulins-develop-grid/',
+                   'mnfienen@usgs.gov, jlarsen@usgs.gov',
+      url='https://github.com/modflowpy/flopy/',
       license='CC0',
       platforms='Windows, Mac OS-X, Linux',
       install_requires=['enum34;python_version<"3.4"',
                         'numpy>=1.9'],
       packages=['flopy', 'flopy.modflow', 'flopy.modflowlgr', 'flopy.modpath',
                 'flopy.mt3d', 'flopy.seawat', 'flopy.utils', 'flopy.plot',
-                'flopy.pest', 'flopy.export',
+                'flopy.pest', 'flopy.export', 'flopy.discretization',
                 'flopy.mf6', 'flopy.mf6.coordinates', 'flopy.mf6.data',
                 'flopy.mf6.modflow', 'flopy.mf6.utils'],
       include_package_data=True, # includes files listed in MANIFEST.in
