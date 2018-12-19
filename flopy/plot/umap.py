@@ -10,7 +10,7 @@ try:
 except ImportError:
     plt = None
 
-from . import plotutil
+from ..plot import plotutil
 import warnings
 warnings.simplefilter('always', PendingDeprecationWarning)
 
