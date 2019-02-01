@@ -95,7 +95,7 @@ class ArrayTemplateGenerator(TemplateGenerator):
         data_struct, data_dimensions = self._get_data_dimensions(model)
         datum_type = data_struct.get_datum_type()
         data_type = data_struct.get_datatype()
-        # build a temporary data storge object
+        # build a temporary data storage object
         data_storage = mfdata.DataStorage(
                 model.simulation_data, data_dimensions, None,
                 mfdata.DataStorageType.internal_array,
@@ -231,7 +231,7 @@ class ListTemplateGenerator(TemplateGenerator):
 
         data_struct, data_dimensions = self._get_data_dimensions(model)
         data_type = data_struct.get_datatype()
-        # build a temporary data storge object
+        # build a temporary data storage object
         data_storage = mfdata.DataStorage(
                 model.simulation_data, data_dimensions, None,
                 mfdata.DataStorageType.internal_array,
@@ -253,7 +253,7 @@ class ListTemplateGenerator(TemplateGenerator):
             for index in range(0, len(type_list)):
                 type_list[index] = (type_list[index][0], object)
 
-        # build rec array
+        # build recarray
         template_data = self._build_template_data(type_list)
         rec_array_data = []
         if maxbound is not None:

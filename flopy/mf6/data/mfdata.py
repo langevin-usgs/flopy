@@ -1339,20 +1339,20 @@ class DataStorage(object):
                              current_key=None):
         # currently only support files containing ndarrays
         if self.data_structure_type != DataStructureType.ndarray:
-            if layer is None:
-                layer = 0
-            fd = self._open_ext_file(layer)
-            if store_internal:
-                self.read_list_data_from_file(fd, current_key,
-                                              current_line=None,
-                                              data_line=None,
-                                              store_internal=store_internal)
-                data_out = self.get_data(layer)
-            else:
-                data_out = self.read_list_data_from_file(
-                    fd, current_key, current_line=None, data_line=None,
-                    store_internal=store_internal)
-        elif layer is None:
+            path = self.data_dimensions.structure.path
+            message= 'Can not convert {} to internal data. External to ' \
+                     'internal file operations currently only supported ' \
+                     'for ndarrays.'.format(path[-1])
+            type_, value_, traceback_ = sys.exc_info()
+            raise MFDataException(
+                self.data_dimensions.structure.get_model(),
+                self.data_dimensions.structure.get_package(),
+                self.data_dimensions.structure.path,
+                'opening external file for writing',
+                self.data_dimensions.structure.name, inspect.stack()[0][3],
+                type_, value_, traceback_, message,
+                self._simulation_data.debug)
+        if layer is None:
             data_out = self._build_full_data(store_internal)
         else:
             # load data from external file
@@ -3104,7 +3104,7 @@ class MFData(DataInterface):
         <package>, <block>, <data>)
     dimensions : DataDimensions
         object used to retrieve dimension information about data
-    *arges, **kwargs : exists to support different child class parameter sets
+    *args, **kwargs : exists to support different child class parameter sets
         with extra init parameters
 
     Attributes

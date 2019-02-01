@@ -418,7 +418,7 @@ class MfList(DataInterface, DataListInterface):
         -------
         df : dataframe
             Dataframe of shape nrow = ncells, ncol = nvar x nper. If
-            the squeeze option is choosen, nper is the number of
+            the squeeze option is chosen, nper is the number of
             stress periods where at least one cells is different,
             otherwise it is equal to the number of keys in MfList.data.
 
@@ -617,7 +617,7 @@ class MfList(DataInterface, DataListInterface):
         return bool(self.__binary)
 
     def write_transient(self, f, single_per=None, forceInternal=False):
-        # forceInteral overrides isExternal (set below) for cases where
+        # forceInternal overrides isExternal (set below) for cases where
         # external arrays are not supported (oh hello MNW1!)
         # write the transient sequence described by the data dict
         nr, nc, nl, nper = self._model.get_nrow_ncol_nlay_nper()
@@ -969,7 +969,7 @@ class MfList(DataInterface, DataListInterface):
         ----------
         out : dict of numpy.ndarrays
             Dictionary of 3-D numpy arrays containing the stress period data for
-            a selected stress period. The dictonary keys are the MfList dtype
+            a selected stress period. The dictionary keys are the MfList dtype
             names for the stress period data ('cond', 'flux', 'bhead', etc.).
 
         See Also
@@ -1107,9 +1107,9 @@ class MfList(DataInterface, DataListInterface):
         (attribute_name,masked 4D ndarray
         Parameters
         ----------
-            model : mbase dervied type
+            model : mbase derived type
             pak_name : str package name (e.g GHB)
-            m4ds : {attibute name:4d masked numpy.ndarray}
+            m4ds : {attribute name:4d masked numpy.ndarray}
         Returns
         -------
             MfList instance

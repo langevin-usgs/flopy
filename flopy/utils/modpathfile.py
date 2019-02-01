@@ -205,7 +205,7 @@ class PathlineFile():
             idx, sequencenumber, group, particleid, pathlinecount = key[0:5]
             ipos1 = ipos0 + pathlinecount
             # fill constant items for particle
-            # particleid is not necessarly unique for all pathlines - use
+            # particleid is not necessarily unique for all pathlines - use
             # sequencenumber which is unique
             data['particleid'][ipos0:ipos1] = sequencenumber
             # set particlegroup and sequence number
@@ -426,7 +426,7 @@ class PathlineFile():
         """
         Write pathlines to a shapefile
 
-        pathline_data : np.recarry
+        pathline_data : np.recarray
             Record array of same form as that returned by
             EndpointFile.get_alldata(). (if none, EndpointFile.get_alldata()
             is exported).
@@ -961,13 +961,13 @@ class EndpointFile():
         return epdest
 
     def write_shapefile(self, endpoint_data=None,
-                        shpname='endpoings.shp',
+                        shpname='endpoints.shp',
                         direction='ending', mg=None, epsg=None, sr=None,
                         **kwargs):
         """
         Write particle starting / ending locations to shapefile.
 
-        endpoint_data : np.recarry
+        endpoint_data : np.recarray
             Record array of same form as that returned by EndpointFile.get_alldata.
             (if none, EndpointFile.get_alldata() is exported).
         shpname : str

@@ -807,7 +807,7 @@ class MFModel(PackageContainer, ModelInterface):
                 if len(pkg_type) > 3 and pkg_type[-1] == 'A':
                     pkg_type = pkg_type[0:-1]
                 # Model Assumption - assuming all name files have a package
-                # rec array
+                # recarray
                 self.name_file.packages.\
                     update_record(['{}6'.format(pkg_type), package.filename,
                                    package.package_name], 0)

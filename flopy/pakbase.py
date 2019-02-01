@@ -365,7 +365,7 @@ class Package(PackageInterface):
             chk = check(self, f=f, verbose=verbose, level=level)
             active = chk.get_active()
 
-            # check for confined layers above convertable layers
+            # check for confined layers above convertible layers
             confined = False
             thickstrt = False
             for option in self.options:
@@ -405,7 +405,7 @@ class Package(PackageInterface):
                            .format(name, mx), 'Warning')
 
             # check for unusually high or low values of hydraulic conductivity
-            if self.layvka.sum() > 0:  # convert vertical anistropy to Kv for checking
+            if self.layvka.sum() > 0:  # convert vertical anisotropy to Kv for checking
                 vka = self.vka.array.copy()
                 for l in range(vka.shape[0]):
                     vka[l] *= self.hk.array[l] if self.layvka.array[
@@ -457,7 +457,7 @@ class Package(PackageInterface):
 
                 # only check specific yield for convertible layers
                 inds = np.array(
-                    [True if l > 0 or l < 0 and 'THICKSRT' in self.options
+                    [True if l > 0 or l < 0 and 'THICKSTRT' in self.options
                      else False for l in self.laytyp])
                 sarrays['sy'] = sarrays['sy'][inds, :, :]
                 active = active[inds, :, :]
@@ -783,7 +783,7 @@ class Package(PackageInterface):
                                 "Package.load() error loading open/close file " + oc_filename + \
                                 " :" + str(e))
                         assert current.shape[
-                                   0] == itmp, "Package.load() error: open/close rec array from file " + \
+                                   0] == itmp, "Package.load() error: open/close recarray from file " + \
                                                oc_filename + " shape (" + str(current.shape) + \
                                                ") does not match itmp: {0:d}".format(
                                                    itmp)

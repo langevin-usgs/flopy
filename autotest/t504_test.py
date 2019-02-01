@@ -49,7 +49,7 @@ def test001a_tharmonic():
 
     # load simulation
     sim = MFSimulation.load(model_name, 'mf6', exe_name, pth,
-                            verbosity_level=VerbosityLevel.quiet)
+                            verbosity_level=0)
     sim.simulation_data.mfpath.set_sim_path(run_folder)
 
     model = sim.get_model(model_name)
@@ -233,7 +233,7 @@ def test005_advgw_tidal():
 
     # load simulation
     sim = MFSimulation.load(model_name, 'mf6', exe_name, pth,
-                            verbosity_level=VerbosityLevel.verbose)
+                            verbosity_level=2)
 
     # make temp folder to save simulation
     sim.simulation_data.mfpath.set_sim_path(run_folder)

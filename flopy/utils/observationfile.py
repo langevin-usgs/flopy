@@ -520,7 +520,7 @@ def get_selection(data, names):
 
     Returns
     -------
-    out : numpy recarry
+    out : numpy recarray
         recarray with selection
 
     """
