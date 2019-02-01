@@ -244,7 +244,7 @@ def run():
                                           verticaldivisions2=10, horizontaldivisions2=10,
                                           verticaldivisions3=10, horizontaldivisions3=10,
                                           verticaldivisions4=10, horizontaldivisions4=10,
-                                          rowdivisions5=0, columndivisons5=0,
+                                          rowdivisions5=0, columndivisions5=0,
                                           rowdivisions6=4, columndivisions6=4)
     pb = flopy.modpath.NodeParticleData(subdivisiondata=facedata, nodes=nodew)
     # create forward particle group
