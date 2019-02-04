@@ -19,7 +19,7 @@ class _MapView(object):
     specific to a single type of model grid ex.(Structured, Vertex, Unstructured)
     is contained in this class!
 
-    This class is not to be instantiated by the User.
+    This class should not be instantiated by the User.
 
     Parameters
     ----------
