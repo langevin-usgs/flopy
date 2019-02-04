@@ -189,7 +189,7 @@ class PathlineFile():
             t = [int(s) for j, s in enumerate(line.split()) if j < 4]
             sequencenumber, group, particleid, pathlinecount = t[0:4]
             ndata += pathlinecount
-            # read the particle data
+            # read in the particle data
             d = np.loadtxt(itertools.islice(self.file, 0, pathlinecount),
                            dtype=dtyper)
             key = (idx, sequencenumber, group, particleid, pathlinecount)
