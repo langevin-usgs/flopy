@@ -24,8 +24,8 @@ class _CrossSection(object):
     Parameters
     ----------
     ax : matplotlib.pyplot.axes object
-    model: flopy.mf6.Modflow or flopy.modflow.Modflow object
-    modelgrid: flopy.discretization.grid object
+    model : flopy.mf6.Modflow or flopy.modflow.Modflow object
+    modelgrid : flopy.discretization.grid object
 
     """
     def __init__(self, ax=None, model=None, modelgrid=None):
@@ -366,7 +366,7 @@ class _StructuredCrossSection(_CrossSection):
         ----------
         a : numpy.ndarray
             Three-dimensional array to plot.
-        colors: list
+        colors : list
             matplotlib fill colors, two required
         masked_values : iterable of floats, ints
             Values to mask.
@@ -705,7 +705,9 @@ class _StructuredCrossSection(_CrossSection):
         """
         Get the extent of the rotated and offset grid
 
-        Return (xmin, xmax, ymin, ymax)
+        Returns
+        -------
+        tuple : (xmin, xmax, ymin, ymax)
 
         """
 

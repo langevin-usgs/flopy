@@ -34,7 +34,7 @@ class _VertexMapView(_MapView):
         (xmin, xmax, ymin, ymax) will be used to specify axes limits.  If None
         then these will be calculated based on grid, coordinates, and rotation.
 
-     Notes
+    Notes
     -----
         _VertexMapView should not be instantiated directly. PlotMapView uses
         this class for VertexGrid specific plotting routines.

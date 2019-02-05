@@ -654,7 +654,9 @@ class _VertexCrossSection(_CrossSection):
         """
         Get the extent of the rotated and offset grid
 
-        Return (xmin, xmax, ymin, ymax)
+        Returns
+        -------
+        tuple : (xmin, xmax, ymin, ymax)
         """
         xpts = []
         if self.direction == "x":

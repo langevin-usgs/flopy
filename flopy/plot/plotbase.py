@@ -383,18 +383,22 @@ class PlotMapView(object):
         this option is controled in the NPF options block. This method
         uses matplotlib quiver to create a matplotlib plot of the output.
 
-        Parameters:
+        Parameters
         ----------
-            qx: (np.ndarray)
-            qy: (np.ndarray)
-            qz: (np.ndarray)
-            istep: (int) row frequency to plot. (Default is 1.)
-            jstep: (int) column frequency to plot. (Default is 1.)
-            kwargs: matplotlib.pyplot keyword arguments for the
-                plt.quiver method.
+        spdis : np.recarray
+            specific discharge recarray from cbc file
+        istep : int
+            row frequency to plot. (Default is 1.)
+        jstep : int
+            column frequency to plot. (Default is 1.)
+        kwargs : matplotlib.pyplot keyword arguments for the
+            plt.quiver method.
 
-        Returns:
-            quiver: (matplotlib.pyplot.quiver) quiver plot of discharge vectors
+        Returns
+        -------
+        quiver : matplotlib.pyplot.quiver
+            quiver plot of discharge vectors
+
         """
         if 'pivot' in kwargs:
             pivot = kwargs.pop('pivot')
@@ -472,8 +476,6 @@ class PlotMapView(object):
             MODFLOW's 'flow right face'
         fff : numpy.ndarray
             MODFLOW's 'flow front face'
-        dis : flopy.modflow.ModflowDis package
-            Depricated parameter
         flf : numpy.ndarray
             MODFLOW's 'flow lower face' (Default is None.)
         head : numpy.ndarray
@@ -574,7 +576,7 @@ class PlotMapView(object):
             modpathfile PathlineFile get_data() or get_alldata()
             methods. Data in rec array is 'x', 'y', 'z', 'time',
             'k', and 'particleid'.
-        travel_time: float or str
+        travel_time : float or str
             travel_time is a travel time selection for the displayed
             pathlines. If a float is passed then pathlines with times
             less than or equal to the passed time are plotted. If a
@@ -721,7 +723,7 @@ class PlotMapView(object):
             modpathfile TimeseriesFile get_data() or get_alldata()
             methods. Data in rec array is 'x', 'y', 'z', 'time',
             'k', and 'particleid'.
-        travel_time: float or str
+        travel_time : float or str
             travel_time is a travel time selection for the displayed
             pathlines. If a float is passed then pathlines with times
             less than or equal to the passed time are plotted. If a
@@ -739,7 +741,6 @@ class PlotMapView(object):
         -------
             lo : list of Line2D objects
         """
-        from matplotlib.collections import LineCollection
 
         # make sure timeseries is a list
         if not isinstance(ts, list):
@@ -987,6 +988,18 @@ class PlotMapView(object):
 class DeprecatedMapView(PlotMapView):
     """
     Deprecation handler for the PlotMapView class
+
+    Parameters
+    ----------
+    model : flopy.modflow.Modflow object
+    modelgrid : flopy.discretization.Grid object
+    ax : matplotlib.pyplot.axes object
+    layer : int
+        model layer to plot, default is layer 1
+    extent : tuple of floats
+        (xmin, xmax, ymin, ymax) will be used to specify axes limits.  If None
+        then these will be calculated based on grid, coordinates, and rotation.
+
     """
     def __init__(self, model=None, modelgrid=None, ax=None,
                  layer=0, extent=None):
@@ -999,6 +1012,41 @@ class DeprecatedMapView(PlotMapView):
     def plot_discharge(self, frf, fff, dis=None,
                        flf=None, head=None, istep=1, jstep=1,
                        normalize=False, **kwargs):
+        """
+        Use quiver to plot vectors. Deprecated method that uses
+        the old function call to pass the method to PlotMapView
+
+        Parameters
+        ----------
+        frf : numpy.ndarray
+            MODFLOW's 'flow right face'
+        fff : numpy.ndarray
+            MODFLOW's 'flow front face'
+        dis : flopy.modflow.ModflowDis package
+            Depricated parameter
+        flf : numpy.ndarray
+            MODFLOW's 'flow lower face' (Default is None.)
+        head : numpy.ndarray
+            MODFLOW's head array.  If not provided, then will assume confined
+            conditions in order to calculated saturated thickness.
+        istep : int
+            row frequency to plot. (Default is 1.)
+        jstep : int
+            column frequency to plot. (Default is 1.)
+        normalize : bool
+            boolean flag used to determine if discharge vectors should
+            be normalized using the magnitude of the specific discharge in each
+            cell. (default is False)
+        kwargs : dictionary
+            Keyword arguments passed to plt.quiver()
+
+        Returns
+        -------
+        quiver : matplotlib.pyplot.quiver
+            Vectors of specific discharge.
+
+        """
+
         if dis is not None:
             self.__cls.mg = plotutil._depreciated_dis_handler(modelgrid=self.mg,
                                                               dis=dis)
@@ -1710,7 +1758,24 @@ class PlotCrossSection(object):
 
 class DeprecatedCrossSection(PlotCrossSection):
     """
-    Deprecation handler for PlotCrossSection
+    Deprecation handler for the PlotCrossSection class
+
+    Parameters
+    ----------
+    ax : matplotlib.pyplot.axes object
+    model : flopy.modflow.Modflow object
+    modelgrid : flopy.discretization.Grid object
+    line : dict
+        Dictionary with either "row", "column", or "line" key. If key
+        is "row" or "column" key value should be the zero-based row or
+        column index for cross-section. If key is "line" value should
+        be an array of (x, y) tuples with vertices of cross-section.
+        Vertices should be in map coordinates consistent with xul,
+        yul, and rotation.
+    extent : tuple of floats
+        (xmin, xmax, ymin, ymax) will be used to specify axes limits.  If None
+        then these will be calculated based on grid, coordinates, and rotation.
+
     """
     def __init__(self, ax=None, model=None, modelgrid=None,
                  line=None, extent=None):
@@ -1718,10 +1783,41 @@ class DeprecatedCrossSection(PlotCrossSection):
                                                      modelgrid=modelgrid,
                                                      line=line,
                                                      extent=extent)
-
+    '''
     def plot_discharge(self, frf, fff, flf=None,
                        head=None, kstep=1, hstep=1, normalize=False,
                        **kwargs):
+        """
+        Use quiver to plot vectors.
+
+        Parameters
+        ----------
+        frf : numpy.ndarray
+            MODFLOW's 'flow right face'
+        fff : numpy.ndarray
+            MODFLOW's 'flow front face'
+        flf : numpy.ndarray
+            MODFLOW's 'flow lower face' (Default is None.)
+        head : numpy.ndarray
+            MODFLOW's head array.  If not provided, then will assume confined
+            conditions in order to calculated saturated thickness.
+        kstep : int
+            layer frequency to plot. (Default is 1.)
+        hstep : int
+            horizontal frequency to plot. (Default is 1.)
+        normalize : bool
+            boolean flag used to determine if discharge vectors should
+            be normalized using the magnitude of the specific discharge in each
+            cell. (default is False)
+        kwargs : dictionary
+            Keyword arguments passed to plt.quiver()
+
+        Returns
+        -------
+        quiver : matplotlib.pyplot.quiver
+            Vectors
+
+        """
         super(DeprecatedCrossSection, self).plot_discharge(frf=frf,
                                                            fff=fff,
                                                            flf=flf,
@@ -1730,3 +1826,4 @@ class DeprecatedCrossSection(PlotCrossSection):
                                                            hstep=hstep,
                                                            normalize=normalize,
                                                            **kwargs)
+    '''

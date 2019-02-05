@@ -49,37 +49,12 @@ class _UnstructuredMapView(_MapView):
                                                    model=model,
                                                    layer=layer,
                                                    extent=extent)
-        """
-        self.mg = None
-        self.layer = layer
-        self.model = model
-
-        if model is not None:
-            self.mg = model.modelgrid
-
-        elif modelgrid is not None:
-            self.mg = modelgrid
-
-        else:
-            raise AssertionError("No model grid was found")
-
-        self.ax = ax
-        if ax is None:
-            try:
-                self.ax = plt.gca()
-                self.ax.set_aspect('equal')
-            except:
-                self.ax = plt.subplot(1, 1, 1, aspect='equal', axisbg='white')
-
-        self._extent = extent
-        """
 
     @property
     def extent(self):
         if self._extent is None:
             self._extent = self.mg.extent
         return self._extent
-
 
     def plot_array(self, a, masked_values=None, **kwargs):
         """

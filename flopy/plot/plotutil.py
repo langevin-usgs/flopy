@@ -312,8 +312,11 @@ class PlotUtilities(object):
 
         Parameters
         ----------
-        model: Flopy model instance
-        SelPackList: (list) list of package names to plot, if none
+        simulation : flopy.mf6.Simulation object
+        model_list : list
+            list of model names to plot
+        SelPackList : list
+            list of package names to plot, if none
             all packages will be plotted
 
         **kwargs : dict
@@ -398,8 +401,9 @@ class PlotUtilities(object):
 
         Parameters
         ----------
-        model: Flopy model instance
-        SelPackList: (list) list of package names to plot, if none
+        model : Flopy model instance
+        SelPackList : list
+            list of package names to plot, if none
             all packages will be plotted
 
         **kwargs : dict
@@ -493,7 +497,8 @@ class PlotUtilities(object):
 
         Parameters
         ----------
-        package: flopy.pakbase.Package instance supplied for plotting
+        package: flopy.pakbase.Package
+            package instance supplied for plotting
 
         **kwargs : dict
             filename_base : str
@@ -807,6 +812,8 @@ class PlotUtilities(object):
         file_extension : str
             Valid matplotlib.pyplot file extension for savefig(). Only used
             if filename_base is not None. (default is 'png')
+        fignum : list
+            list of figure numbers
         **kwargs : dict
             axes : list of matplotlib.pyplot.axis
                 List of matplotlib.pyplot.axis that will be used to plot
@@ -886,6 +893,8 @@ class PlotUtilities(object):
         mflay : int
             MODFLOW zero-based layer number to return.  If None, then all
             all layers will be included. (default is None)
+        fignum : list
+            list of figure numbers
         **kwargs : dict
             axes : list of matplotlib.pyplot.axis
                 List of matplotlib.pyplot.axis that will be used to plot
@@ -981,6 +990,10 @@ class PlotUtilities(object):
         file_extension : str
             Valid matplotlib.pyplot file extension for savefig(). Only used
             if filename_base is not None. (default is 'png')
+        kper : int
+            zero based stress period number
+        fignum : list
+            list of figure numbers
         **kwargs : dict
             axes : list of matplotlib.pyplot.axis
                 List of matplotlib.pyplot.axis that will be used to plot
@@ -1258,6 +1271,8 @@ class PlotUtilities(object):
         Parameters
         ----------
         package : flopy.pakbase.Package objects
+        kper : int
+            zero based stress period number
         axes: matplotlib.axes object
             existing matplotlib axis object to layer additional
             plotting on to. Optional.
@@ -1351,6 +1366,7 @@ class PlotUtilities(object):
         Parameters
         ----------
         mflay : int
+            zero based layer number
         maxlay : int
             maximum number of layers in the plotting array
 
@@ -1388,7 +1404,7 @@ class PlotUtilities(object):
 
         Returns
         -------
-        names:  list or None
+        names :  list or None
             list of names or None
 
         """
@@ -1678,8 +1694,6 @@ class UnstructuredPlotUtilities(object):
             model grid x vertices
         ygrid : np.array
             model grid y vertices
-        returncellid : bool
-            flag to return the cellids with vertices
 
         Returns
         -------
@@ -1805,12 +1819,12 @@ class UnstructuredPlotUtilities(object):
 
         Parameters
         ----------
-        verts: np.array of floats
+        verts : np.array of floats
             Nx2 array of verts
 
         Returns
         -------
-        verts: np.array of float
+        verts : np.array of float
             Nx2 array of verts
 
         """
@@ -2075,10 +2089,10 @@ def plot_shapefile(shp, ax=None, radius=500., cmap='Dark2',
     ----------
     shp : string
         Name of the shapefile to plot.
+    ax : matplolib.pyplot.axes object
+
     radius : float
         Radius of circle for points.  (Default is 500.)
-    linewidth : float
-        Width of all lines. (default is 1)
     cmap : string
         Name of colormap to use for polygon shading (default is 'Dark2')
     edgecolor : string
@@ -2197,8 +2211,6 @@ def plot_cvfd(verts, iverts, ax=None, layer=0, cmap='Dark2',
     layer : int
         layer to extract. Used in combination to the optional ncpl
         parameter. Default is 0
-    linewidth : float
-        Width of all lines. (default is 1)
     cmap : string
         Name of colormap to use for polygon shading (default is 'Dark2')
     edgecolor : string
@@ -2555,7 +2567,8 @@ def _set_coord_info(mg, xul, yul, xll, yll, rotation):
 
     Parameters
     ----------
-    mg : fp.discretization.Grid
+    mg : fp.discretization.Grid object
+
     xul : float
         upper left x-coordinate location
     yul : float
@@ -2597,7 +2610,8 @@ def _depreciated_dis_handler(modelgrid, dis):
 
     Parmaeter
     ---------
-    modelgrid : fp.discretization.Grid
+    modelgrid : fp.discretization.Grid object
+
     dis : fp.modflow.ModflowDis object
 
     Returns
