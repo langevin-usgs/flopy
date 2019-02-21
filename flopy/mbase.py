@@ -194,7 +194,7 @@ class BaseModel(ModelInterface):
         self._namefile = self.__name + '.' + self.namefile_ext
         self._packagelist = []
         self.heading = ''
-        self._exe_name = exe_name
+        self.exe_name = exe_name
         self._verbose = verbose
         self.external_extension = 'ref'
         if model_ws is None: model_ws = os.getcwd()
@@ -1189,7 +1189,7 @@ class BaseModel(ModelInterface):
 
         """
 
-        return run_model(self._exe_name, self.namefile, model_ws=self.model_ws,
+        return run_model(self.exe_name, self.namefile, model_ws=self.model_ws,
                          silent=silent, pause=pause, report=report,
                          normal_msg=normal_msg)
 
