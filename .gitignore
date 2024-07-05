@@ -78,8 +78,6 @@ autotest/temp
 autotest/tempbin
 autotest/.noseids
 
-examples/temp
-
 *.chk
 *.chk.csv
 
