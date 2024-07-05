@@ -58,6 +58,36 @@ class Triangle:
         self.additional_args = additional_args
         self._initialize_vars()
 
+    def add_linestring(self, linestring):
+        """
+        Add a line to the triangle mesh.  The line will be preserved
+        in the resulting mesh.
+
+        Parameters
+        ----------
+        linestring : list, geojson, shapely.geometry, shapefile.Shape
+            add linestring method accepts any of these geometries:
+
+            a list of (x, y) points
+            geojson LineString object
+            shapely LineString object
+            shapefile LineString shape
+            flopy.utils.geometry.LineString object
+
+
+        Returns
+        -------
+        None
+
+        """
+        if isinstance(linestring, (list, tuple, np.ndarray)):
+            linestring = [linestring]
+
+        geom = GeoSpatialUtil(linestring, shapetype="LineString")
+        linestring = geom.points
+
+        self._linestrings.append(linestring)
+
     def add_polygon(self, polygon, ignore_holes=False):
         """
         Add a polygon
@@ -154,11 +184,18 @@ class Triangle:
 
         # write the active domain to a file
         fname = os.path.join(self.model_ws, f"{self.file_prefix}.0.node")
-        self._write_nodefile(fname)
+        
+        if self._linestrings is not None:
+            ls_nds = self._write_nodefile(fname)
+        else:
+            self._write_nodefile(fname)
 
         # poly file
         fname = os.path.join(self.model_ws, f"{self.file_prefix}.0.poly")
-        self._write_polyfile(fname)
+        if self._linestrings is not None:
+            self._write_polyfile(fname,ls_nds)
+        else:
+            self._write_polyfile(fname)
 
         # Construct the triangle command
         cmds = [self.exe_name]
@@ -195,6 +232,78 @@ class Triangle:
         self.iverts = []
         for row in self.ele:
             self.iverts.append([row[1], row[2], row[3]])
+
+
+    def refine_nds(self, nd_numbers, area, iteration=1, verbose=False):
+        # refine existing mesh at specified nodes (refines all elements touching the node)
+        c1 = np.isin(self.ele['iv1'], nd_numbers)
+        c2 = np.isin(self.ele['iv2'], nd_numbers)
+        c3 = np.isin(self.ele['iv3'], nd_numbers)
+        ele2refine = np.where(c1 | c2 | c3)[0] # returns the element numbers of all triangles touching the specified nodes
+        self.refine_ele(ele2refine, area, iteration, verbose)
+
+
+    def refine_ele(self, ele_num, area, iteration=1, verbose=False):
+        """
+        Refine the triangular mesh with specified minimum area at specified elements
+
+        Parameters
+        ----------
+        ele_num : list or array of element numbers to refine
+        area: maximum area constraint to be applied to triangles specified in ele_num
+        iteration: iteration number of mesh generation to apply refinement to 
+        verbose : bool
+            If true, print the results of the triangle command to the terminal
+            (default is False)
+
+        Returns
+        -------
+        None
+
+        """
+        fname = os.path.join(self.model_ws, f"{self.file_prefix}.{iteration}.area")
+        self._write_areafile(fname, ele_num, area)
+        # # provide some protection by removing existing files
+
+        # Construct the triangle command
+        cmds = [self.exe_name]
+        cmds.append("-r")  # Refine existing mesh
+        cmds.append("-a") # apply area constraint 
+        if self.maximum_area is not None: # apply area constraint a second time for max area
+            cmds.append(f"-a{self.maximum_area}")
+        else:
+            cmds.append("-a")
+        if self.angle is not None:
+            cmds.append(f"-q{self.angle}")
+        if self.additional_args is not None:
+            cmds += self.additional_args
+        
+        cmds.append("-A")  # assign attributes
+        cmds.append("-p")  # triangulate .poly file
+        cmds.append("-V")  # verbose
+        cmds.append("-D")  # delaunay triangles for finite volume
+        cmds.append("-e")  # edge file
+        cmds.append("-n")  # neighbor file
+        cmds.append(f"{self.file_prefix}.{iteration}")  # output file name
+
+        # run Triangle
+        buff = subprocess.check_output(cmds, cwd=self.model_ws)
+        buff = buff.decode()
+        if verbose:
+            print(buff)
+
+        # load the results
+        self._load_results(iteration=iteration+1)
+        self.ncpl = self.ele.shape[0]
+        self.nvert = self.node.shape[0]
+
+        # create verts and iverts
+        self.verts = self.node[["x", "y"]]
+        self.verts = np.array(self.verts.tolist(), float)
+        self.iverts = []
+        for row in self.ele:
+            self.iverts.append([row[1], row[2], row[3]])
+
 
     def plot(
         self,
@@ -569,6 +678,7 @@ class Triangle:
         """
         return self.ele["attribute"]
 
+
     def clean(self):
         """
         Remove the input and output files created by this class and by the
@@ -594,23 +704,25 @@ class Triangle:
                 if os.path.isfile(fname):
                     print(f"Could not remove: {fname}")
 
+
     def _initialize_vars(self):
         self.file_prefix = "_triangle"
         self.ncpl = 0
         self.nvert = 0
         self._active_domain = None
         self._polygons = []
+        self._linestrings = []
         self._holes = []
         self._regions = []
         self.verts = None
         self.iverts = None
         self.edgedict = None
 
-    def _load_results(self):
+    def _load_results(self,iteration=1):
         # node file
         ext = "node"
         dt = [("ivert", int), ("x", float), ("y", float)]
-        fname = os.path.join(self.model_ws, f"{self.file_prefix}.1.{ext}")
+        fname = os.path.join(self.model_ws, f"{self.file_prefix}.{iteration}.{ext}")
         setattr(self, ext, None)
         with open(fname, "r") as f:
             line = f.readline()
@@ -632,7 +744,7 @@ class Triangle:
         # ele file
         ext = "ele"
         dt = [("icell", int), ("iv1", int), ("iv2", int), ("iv3", int)]
-        fname = os.path.join(self.model_ws, f"{self.file_prefix}.1.{ext}")
+        fname = os.path.join(self.model_ws, f"{self.file_prefix}.{iteration}.{ext}")
         setattr(self, ext, None)
         with open(fname, "r") as f:
             line = f.readline()
@@ -651,7 +763,7 @@ class Triangle:
         # edge file
         ext = "edge"
         dt = [("iedge", int), ("endpoint1", int), ("endpoint2", int)]
-        fname = os.path.join(self.model_ws, f"{self.file_prefix}.1.{ext}")
+        fname = os.path.join(self.model_ws, f"{self.file_prefix}.{iteration}.{ext}")
         setattr(self, ext, None)
         with open(fname, "r") as f:
             line = f.readline()
@@ -673,7 +785,7 @@ class Triangle:
             ("neighbor2", int),
             ("neighbor3", int),
         ]
-        fname = os.path.join(self.model_ws, f"{self.file_prefix}.1.{ext}")
+        fname = os.path.join(self.model_ws, f"{self.file_prefix}.{iteration}.{ext}")
         setattr(self, ext, None)
         with open(fname, "r") as f:
             line = f.readline()
@@ -687,38 +799,106 @@ class Triangle:
             setattr(self, ext, a)
 
     def _write_nodefile(self, fname):
+        # some code to account for possibility of overlaping nodes in input polygons, lines and points
+        if self._linestrings is not None:
+            verts = [] # list of verticies
+            ls_nds =  [] # list to hold node index for each line
+            for p in self._polygons:
+                for vertex in p:
+                    verts.append(vertex)
+
+            nverts=len(verts)
+            for j,l in enumerate(self._linestrings):
+                ls_nds.append([])
+                for v in l:
+                    if type(v)==np.ndarray:
+                        v=tuple(v)
+                    if v not in verts: #if the linestring vertex is not already in the list add it
+                        verts.append(v)
+                        ls_nds[j].append(nverts)
+                        nverts=nverts+1
+                    else: #vertex is already in the list
+                        # get the vertex index
+                        vert_ind=np.where((np.array(verts)==np.array(v)).all(axis=1))[0][0]
+                        # add the index of that node to the list for that line
+                        ls_nds[j].append(vert_ind)
+                        
+            if self._nodes is not None:
+                for i in range(self._nodes.shape[0]):
+                    v=tuple(self._nodes[i])
+                    if v not in verts:
+                        verts.append(tuple(self._nodes[i]))
+                        nverts=nverts+1
+            
         f = open(fname, "w")
         nvert = 0
         for p in self._polygons:
             nvert += len(p)
         if self._nodes is not None:
             nvert += self._nodes.shape[0]
+        if self._linestrings is not None:
+            nvert=len(verts)
         s = f"{nvert} 2 0 0\n"
         f.write(s)
-        ip = 0
-        for p in self._polygons:
-            for vertex in p:
-                s = f"{ip} {vertex[0]} {vertex[1]}\n"
-                f.write(s)
-                ip += 1
-        if self._nodes is not None:
-            for i in range(self._nodes.shape[0]):
-                s = f"{ip} {self._nodes[i, 0]} {self._nodes[i, 1]}\n"
-                f.write(s)
-                ip += 1
-        f.close()
 
-    def _write_polyfile(self, fname):
+        if self._linestrings is not None:
+            for i,v in enumerate(verts):
+                    s = f"{i} {v[0]} {v[1]}\n"  # {'  '} {j+1}\n"
+                    f.write(s)
+            f.close()           
+        else:
+            ip = 0
+            for p in self._polygons:
+                for vertex in p:
+                    s = f"{ip} {vertex[0]} {vertex[1]}\n"
+                    f.write(s)
+                    ip += 1
+      
+            if self._nodes is not None:
+                for i in range(self._nodes.shape[0]):
+                    s = f"{ip} {self._nodes[i, 0]} {self._nodes[i, 1]}\n"
+                    f.write(s)
+                    ip += 1
+    
+            f.close()
+        if self._linestrings is not None:
+            return ls_nds
+        
+
+    def _write_areafile(self, fname, ele_num, area):
+        if type(area) in (int, float, np.float64):
+            area = np.ones(len(ele_num)) * area
+        with open(fname, "w") as f:
+            nele = self.ele.shape[0]
+            s = f"{nele}\n"
+            f.write(s)
+            j = 0
+            for e in self.ele:
+                if e[0] in ele_num:
+                    s = f"{e[0]} {area[j]}\n"
+                    f.write(s)
+                    j += 1
+                else:
+                    s = f"{e[0]} {-1}\n"
+                    f.write(s)                
+        return
+    
+        
+    def _write_polyfile(self, fname, ls_nds=None):
         f = open(fname, "w")
 
         # vertices, write zero to indicate read from node file
         s = "0 0 0 0\n"
         f.write(s)
 
-        # segments
+        # segments are sum of polygons and linestrings
         nseg = 0
         for p in self._polygons:
             nseg += len(p)
+        for l in self._linestrings:
+            # linestrings are a coordinate list so # of segments is # of coordinates -1
+            nseg += len(l) - 1 
+        
         bm = 1
         s = f"{nseg} {bm}\n"
         f.write(s)
@@ -727,6 +907,9 @@ class Triangle:
         ipstart = 0
         for p in self._polygons:
             nseg = len(p)
+            # number of segments is equal to the number of 
+            # points.  This way, there is a final segment that
+            # closes the polygon
             for i in range(nseg):
                 ep1 = i
                 ep2 = i + 1
@@ -739,6 +922,20 @@ class Triangle:
                 iseg += 1
             ipstart += len(p)
 
+        # linestrings
+        if self._linestrings is not None:
+            poly_iseg=iseg
+            for j,l in enumerate(self._linestrings):
+                nseg=len(l)-1
+                for i in range(nseg):
+                    ep1 = ls_nds[j][i]
+                    ep2 = ls_nds[j][i + 1]
+                    s = f"{iseg} {ep1} {ep2} {'  '} {poly_iseg + j + 1}\n"
+                    f.write(s)
+                    iseg += 1
+                ipstart += len(p)
+                    
+        
         # holes
         nholes = len(self._holes)
         s = f"{nholes}\n"
@@ -773,3 +970,27 @@ class Triangle:
                 edgedict[(iv1, iv2)] = iseg
                 edgedict[(iv2, iv1)] = iseg
         self.edgedict = edgedict
+
+    def unique_vertices(xy_vertarray_list):
+        """
+        This routine looks for duplicate points in one or more
+        x,y vertex arrays provided as input.  The routine returns
+        a new vertex array with only the unique points and a separate
+        index array equal in size to the sum of all the rows provided
+        in xy_vertarray_list.  The index array contains the index number
+        of the original x,y row in the new unique array.
+        """
+        # stack the vertex arrays
+        combined_array = np.vstack(xy_vertarray_list)
+
+        # find unique x,y pairs in the combined list
+        unq = np.unique(combined_array, axis=0)
+
+        # find the index of each combined_array row in the unique array
+        nrows = combined_array.shape[0]
+        index_in_unq = np.empty(nrows, dtype=int)
+        for i, row in enumerate(combined_array):
+            indices = np.argwhere(np.all(combined_array == row, axis=1))
+            index_in_unq[i] = indices.ravel().min()
+
+        return unq, index_in_unq
